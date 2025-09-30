@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testng-results ignored="0" total="2" passed="2" failed="0" skipped="0">
+  <reporter-output>
+  </reporter-output>
+  <suite started-at="2025-09-30T09:31:01 IST" name="Default suite" finished-at="2025-09-30T09:31:38 IST" duration-ms="37007">
+    <groups>
+    </groups>
+    <test started-at="2025-09-30T09:31:01 IST" name="Default test" finished-at="2025-09-30T09:31:38 IST" duration-ms="37007">
+      <class name="com.mystore.testcases.SearchTest">
+        <test-method is-config="true" signature="loadConfig()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:01 IST" name="loadConfig" finished-at="2025-09-30T09:31:01 IST" duration-ms="42" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- loadConfig -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:02 IST" name="setUp" finished-at="2025-09-30T09:31:13 IST" duration-ms="11845" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="testInvalidSearchShowsNoResultsMessage()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:13 IST" name="testInvalidSearchShowsNoResultsMessage" finished-at="2025-09-30T09:31:20 IST" duration-ms="6958" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testInvalidSearchShowsNoResultsMessage -->
+        <test-method is-config="true" signature="tearDownTest()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:20 IST" name="tearDownTest" finished-at="2025-09-30T09:31:21 IST" duration-ms="1088" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDownTest -->
+        <test-method is-config="true" signature="setUp()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:21 IST" name="setUp" finished-at="2025-09-30T09:31:30 IST" duration-ms="8931" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- setUp -->
+        <test-method signature="testValidSearchShowsResults()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:30 IST" name="testValidSearchShowsResults" finished-at="2025-09-30T09:31:37 IST" duration-ms="7064" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- testValidSearchShowsResults -->
+        <test-method is-config="true" signature="tearDownTest()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:37 IST" name="tearDownTest" finished-at="2025-09-30T09:31:38 IST" duration-ms="1013" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDownTest -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:38 IST" name="tearDown" finished-at="2025-09-30T09:31:38 IST" duration-ms="1" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- tearDown -->
+      </class> <!-- com.mystore.testcases.SearchTest -->
+    </test> <!-- Default test -->
+  </suite> <!-- Default suite -->
+</testng-results>
