@@ -440,6 +440,17 @@ public class Action extends BaseClass {
 			}
 		}
 	}
+	// Wait until element is visible
+	public static WebElement waitForVisibility(WebDriver driver, WebElement element, int timeout) {
+	    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
+	    return wait.until(ExpectedConditions.visibilityOf(element));
+	}
+
+	// Wait until element is clickable
+	public static WebElement waitForClickable(WebDriver driver, WebElement element, int timeout) {
+	    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
+	    return wait.until(ExpectedConditions.elementToBeClickable(element));
+	}
 
 	public boolean draganddrop(WebDriver driver, WebElement source, WebElement target) {
 		boolean flag = false;

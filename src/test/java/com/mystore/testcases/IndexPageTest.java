@@ -5,7 +5,6 @@ package com.mystore.testcases;
 
 import java.util.List;
 
-import org.openqa.selenium.WebDriver;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -13,7 +12,6 @@ import org.testng.annotations.Test;
 
 import com.mystore.base.BaseClass;
 import com.mystore.page.HomePage;
-import com.mystore.page.IndexPage;
 
 /* IndexPageTest
  * ---------------
@@ -26,43 +24,41 @@ import com.mystore.page.IndexPage;
  * - Banners
  */
 public class IndexPageTest extends BaseClass{
-	IndexPage indexpage;
+	
 	HomePage homepage;
 @BeforeMethod
 	public void setup() {
 	launchApp();
 }
-@Test(description = "Verify the homepage logo")
+@Test(description = "Verify the homepage logo", groups = {"sanity", "smoke"})
 public void verifyLogo() throws Throwable{
-	indexpage = new IndexPage(getDriver());
-	boolean result=indexpage.verifyLogo();
+	homepage = new HomePage(getDriver());
+	boolean result=homepage.verifyLogo();
 	Assert.assertTrue(result);
 }
-@Test(description = "Verify the homepage title")
+@Test(description = "Verify the homepage title", groups = {"sanity", "smoke"})
 public void verifyTitle() {
-	indexpage = new IndexPage(getDriver());
+	homepage = new HomePage(getDriver());
 
-	String actualtitle=indexpage.verifyTitle();
+	String actualtitle=homepage.verifyTitle();
 	Assert.assertEquals(actualtitle, "Crafting Made Easy with Digital Designs & Fonts", 
             "Page title did not match!");
 }
-@Test(description = "Verify no broken links on homepage")
+@Test(description = "Verify no broken links on homepage", groups = {"system"})
 public void verifyBrokenLinks() {
-    indexpage = new IndexPage(getDriver());
-    List<String> brokenLinks = indexpage.getBrokenLinks();
+	homepage = new HomePage(getDriver());
+    List<String> brokenLinks = homepage.getBrokenLinks();
 
     Assert.assertTrue(brokenLinks.isEmpty(),
             "Broken links found: " + String.join(", ", brokenLinks));
 }
-@Test(description = "Verify navigation to homepage via logo")
+@Test(description = "Verify navigation to homepage via logo", groups = {"sanity", "smoke"})
 public void testNavigationToHomeViaLogo() {
     homepage = new HomePage(getDriver());
     homepage.clickLogo();
     Assert.assertEquals(getDriver().getCurrentUrl(), 
             "https://www.silhouettedesignstore.com/");
 }
-
-
 
 @AfterMethod
 public void tearDown() {

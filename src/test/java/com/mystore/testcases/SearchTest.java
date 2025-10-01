@@ -10,13 +10,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import com.mystore.base.BaseClass;
 import com.mystore.page.HomePage;
-import com.mystore.page.IndexPage;
 
 /**
  * 
  */
 public class SearchTest extends BaseClass{
-	private HomePage homePage;
+	HomePage homePage;
 	@BeforeMethod
     public void setUp() {
         // Launch app from BaseClass
@@ -29,7 +28,7 @@ public class SearchTest extends BaseClass{
     public void tearDownTest() {
         tearDown();  // closes browser after each test
     }
-    @Test
+    @Test(description = "Verify search with valid term and display first 5 product name", groups = { "system"})
     public void testValidSearchShowsResults() throws TimeoutException, InterruptedException {
 
         String searchTerm = "flower";
@@ -44,7 +43,7 @@ public class SearchTest extends BaseClass{
         Thread.sleep(3000);
     }
 
-    @Test
+    @Test(description = "Verify search with invalid term and display search result message", groups = {"system"})
     public void testInvalidSearchShowsNoResultsMessage() throws TimeoutException, InterruptedException {
     	 String invalidSearchTerm = "xyzabc123";
     	 homePage.searchTerm(invalidSearchTerm);

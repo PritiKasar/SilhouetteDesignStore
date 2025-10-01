@@ -4,38 +4,37 @@
 package com.mystore.testcases;
 
 import org.testng.Assert;
-import org.testng.SkipException;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import com.mystore.base.BaseClass;
-import com.mystore.page.IndexPage;
+import com.mystore.page.HomePage;
 import com.mystore.page.LoginAble;
-import com.mystore.page.LoginPopUp;
 import com.mystore.page.MyAccount;
 
 /**
  * 
  */
 public class Login extends BaseClass{
-    IndexPage indexPage;
+	HomePage homepage;
     LoginAble login;
 	
 	@BeforeMethod
 	public void setup() throws Throwable{
 		 launchApp();
-	        indexPage = new IndexPage(getDriver());
+			homepage = new HomePage(getDriver());
+
 
 	        // Try opening login popup
-	        login = indexPage.clickAndCheckLogin();
+	        login = homepage.clickAndCheckLogin();
 
 	        if (login == null) {
 	        	 Assert.fail("❌ Neither login popup nor login page opened.");
 	        }
 	    }
 	
-	@Test(description = "Verify SignIn element presence")
+	@Test(description = "Verify SignIn element presence", groups = { "unit"})
     public void verifySignInButtonPresence() {
         Assert.assertTrue(login.isSignInButtonDisplayed(),
             "❌ Sign In button should be displayed (popup or page).");
@@ -51,7 +50,7 @@ public class Login extends BaseClass{
 		System.out.println("✅ Login popup elements verified.");
 	}*/
 	
-	@Test(description = "Verify Login popup with valid credentials")
+	@Test(description = "Verify Login popup with valid credentials", groups = { "system"})
 	public void loginWithValidCredentials() throws Throwable {
 		
 	    // Read credentials from config.properties
@@ -72,7 +71,7 @@ public class Login extends BaseClass{
 
 	}
 	
-	@Test(description = "Verify Login popup with invalid credentials")
+	@Test(description = "Verify Login popup with invalid credentials", groups = {"system"})
 	public void loginWithInValidCredentials() throws Throwable {
 	    
 	    // Read invalid credentials from config.properties

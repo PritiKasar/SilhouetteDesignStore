@@ -1,45 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testng-results ignored="0" total="2" passed="2" failed="0" skipped="0">
+<testng-results ignored="0" total="4" passed="4" failed="0" skipped="0">
   <reporter-output>
   </reporter-output>
-  <suite started-at="2025-09-30T09:31:01 IST" name="Default suite" finished-at="2025-09-30T09:31:38 IST" duration-ms="37007">
+  <suite started-at="2025-10-01T14:40:21 IST" name="Default suite" finished-at="2025-10-01T14:41:00 IST" duration-ms="39364">
     <groups>
+      <group name="unit">
+        <method signature="RegistrationTest.verifyCreateAccountButtonIsDisplayed()[pri:0, instance:com.mystore.testcases.RegistrationTest@6ad82709]" name="verifyCreateAccountButtonIsDisplayed" class="com.mystore.testcases.RegistrationTest"/>
+      </group> <!-- unit -->
+      <group name="system">
+        <method signature="RegistrationTest.registerWithEmptyFields()[pri:0, instance:com.mystore.testcases.RegistrationTest@6ad82709]" name="registerWithEmptyFields" class="com.mystore.testcases.RegistrationTest"/>
+        <method signature="RegistrationTest.registerWithExistingEmail()[pri:0, instance:com.mystore.testcases.RegistrationTest@6ad82709]" name="registerWithExistingEmail" class="com.mystore.testcases.RegistrationTest"/>
+        <method signature="RegistrationTest.registerWithValidData()[pri:0, instance:com.mystore.testcases.RegistrationTest@6ad82709]" name="registerWithValidData" class="com.mystore.testcases.RegistrationTest"/>
+      </group> <!-- system -->
     </groups>
-    <test started-at="2025-09-30T09:31:01 IST" name="Default test" finished-at="2025-09-30T09:31:38 IST" duration-ms="37007">
-      <class name="com.mystore.testcases.SearchTest">
-        <test-method is-config="true" signature="loadConfig()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:01 IST" name="loadConfig" finished-at="2025-09-30T09:31:01 IST" duration-ms="42" status="PASS">
+    <test started-at="2025-10-01T14:40:21 IST" name="Default test" finished-at="2025-10-01T14:41:00 IST" duration-ms="39364">
+      <class name="com.mystore.testcases.RegistrationTest">
+        <test-method is-config="true" signature="setup()[pri:0, instance:com.mystore.testcases.RegistrationTest@6ad82709]" started-at="2025-10-01T14:40:21 IST" name="setup" finished-at="2025-10-01T14:40:30 IST" duration-ms="8514" status="PASS">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- loadConfig -->
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:02 IST" name="setUp" finished-at="2025-09-30T09:31:13 IST" duration-ms="11845" status="PASS">
+        </test-method> <!-- setup -->
+        <test-method signature="registerWithEmptyFields()[pri:0, instance:com.mystore.testcases.RegistrationTest@6ad82709]" started-at="2025-10-01T14:40:30 IST" name="registerWithEmptyFields" description="Verify Registration with blank data" finished-at="2025-10-01T14:40:30 IST" duration-ms="249" status="PASS">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- setUp -->
-        <test-method signature="testInvalidSearchShowsNoResultsMessage()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:13 IST" name="testInvalidSearchShowsNoResultsMessage" finished-at="2025-09-30T09:31:20 IST" duration-ms="6958" status="PASS">
+        </test-method> <!-- registerWithEmptyFields -->
+        <test-method is-config="true" signature="setup()[pri:0, instance:com.mystore.testcases.RegistrationTest@6ad82709]" started-at="2025-10-01T14:40:30 IST" name="setup" finished-at="2025-10-01T14:40:37 IST" duration-ms="7254" status="PASS">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- testInvalidSearchShowsNoResultsMessage -->
-        <test-method is-config="true" signature="tearDownTest()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:20 IST" name="tearDownTest" finished-at="2025-09-30T09:31:21 IST" duration-ms="1088" status="PASS">
+        </test-method> <!-- setup -->
+        <test-method signature="registerWithExistingEmail()[pri:0, instance:com.mystore.testcases.RegistrationTest@6ad82709]" started-at="2025-10-01T14:40:37 IST" name="registerWithExistingEmail" description="Verify Registration with existing data" finished-at="2025-10-01T14:40:38 IST" duration-ms="896" status="PASS">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- tearDownTest -->
-        <test-method is-config="true" signature="setUp()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:21 IST" name="setUp" finished-at="2025-09-30T09:31:30 IST" duration-ms="8931" status="PASS">
+        </test-method> <!-- registerWithExistingEmail -->
+        <test-method is-config="true" signature="setup()[pri:0, instance:com.mystore.testcases.RegistrationTest@6ad82709]" started-at="2025-10-01T14:40:38 IST" name="setup" finished-at="2025-10-01T14:40:45 IST" duration-ms="7371" status="PASS">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- setUp -->
-        <test-method signature="testValidSearchShowsResults()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:30 IST" name="testValidSearchShowsResults" finished-at="2025-09-30T09:31:37 IST" duration-ms="7064" status="PASS">
+        </test-method> <!-- setup -->
+        <test-method signature="registerWithValidData()[pri:0, instance:com.mystore.testcases.RegistrationTest@6ad82709]" started-at="2025-10-01T14:40:45 IST" name="registerWithValidData" description="Verify Registration with valid data" finished-at="2025-10-01T14:40:48 IST" duration-ms="2428" status="PASS">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- testValidSearchShowsResults -->
-        <test-method is-config="true" signature="tearDownTest()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:37 IST" name="tearDownTest" finished-at="2025-09-30T09:31:38 IST" duration-ms="1013" status="PASS">
+        </test-method> <!-- registerWithValidData -->
+        <test-method is-config="true" signature="setup()[pri:0, instance:com.mystore.testcases.RegistrationTest@6ad82709]" started-at="2025-10-01T14:40:48 IST" name="setup" finished-at="2025-10-01T14:40:58 IST" duration-ms="10179" status="PASS">
           <reporter-output>
           </reporter-output>
-        </test-method> <!-- tearDownTest -->
-        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.mystore.testcases.SearchTest@d35dea7]" started-at="2025-09-30T09:31:38 IST" name="tearDown" finished-at="2025-09-30T09:31:38 IST" duration-ms="1" status="PASS">
+        </test-method> <!-- setup -->
+        <test-method signature="verifyCreateAccountButtonIsDisplayed()[pri:0, instance:com.mystore.testcases.RegistrationTest@6ad82709]" started-at="2025-10-01T14:40:58 IST" name="verifyCreateAccountButtonIsDisplayed" description="Verify Registration element presence" finished-at="2025-10-01T14:40:58 IST" duration-ms="173" status="PASS">
+          <reporter-output>
+          </reporter-output>
+        </test-method> <!-- verifyCreateAccountButtonIsDisplayed -->
+        <test-method is-config="true" signature="tearDown()[pri:0, instance:com.mystore.testcases.RegistrationTest@6ad82709]" started-at="2025-10-01T14:40:58 IST" name="tearDown" finished-at="2025-10-01T14:41:00 IST" duration-ms="2054" status="PASS">
           <reporter-output>
           </reporter-output>
         </test-method> <!-- tearDown -->
-      </class> <!-- com.mystore.testcases.SearchTest -->
+      </class> <!-- com.mystore.testcases.RegistrationTest -->
     </test> <!-- Default test -->
   </suite> <!-- Default suite -->
 </testng-results>
