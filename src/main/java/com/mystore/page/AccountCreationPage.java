@@ -4,6 +4,7 @@
 package com.mystore.page;
 
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 /**
  * 
@@ -100,6 +101,36 @@ public class AccountCreationPage implements Registration {
 
 	@Override
 	public String getrequiredErrorMessageText() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public WebElement getCreateAccountButton() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void triggerFieldValidation() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public WebElement getSuccessMessageElement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public WebElement getErrorElement() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public WebElement getRequiredErrorElement() {
 		// TODO Auto-generated method stub
 		return null;
 	}

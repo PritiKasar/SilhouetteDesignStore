@@ -199,7 +199,7 @@ public class HomePage extends BaseClass{
 
 	            if (isElementVisible(registerPopupLocator)) {
 	                log("✅ Register popup detected.");
-	                return new AccountCreationPopup(driver);
+	                return new AccountCreationPopup();
 	            } else if (driver.getCurrentUrl().contains(registerPageUrlFragment)) {
 	                log("✅ Redirected to registration page.");
 	                return new AccountCreationPage(driver);

@@ -6,9 +6,12 @@ package com.mystore.testcases;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import com.mystore.base.BaseClass;
+import com.mystore.dataprovider.DataProviders;
 import com.mystore.page.HomePage;
 import com.mystore.page.LoginAble;
 import com.mystore.page.MyAccount;
@@ -16,6 +19,8 @@ import com.mystore.page.MyAccount;
 /**
  * 
  */
+@Listeners(listeners.ExtentTestListener.class)
+
 public class Login extends BaseClass{
 	HomePage homepage;
     LoginAble login;
@@ -34,7 +39,7 @@ public class Login extends BaseClass{
 	        }
 	    }
 	
-	@Test(description = "Verify SignIn element presence", groups = { "unit"})
+	@Test(description = "Login : Verify SignIn element presence", groups = { "unit"}, priority = 1)
     public void verifySignInButtonPresence() {
         Assert.assertTrue(login.isSignInButtonDisplayed(),
             "❌ Sign In button should be displayed (popup or page).");
@@ -50,17 +55,18 @@ public class Login extends BaseClass{
 		System.out.println("✅ Login popup elements verified.");
 	}*/
 	
-	@Test(description = "Verify Login popup with valid credentials", groups = { "system"})
-	public void loginWithValidCredentials() throws Throwable {
+	@Test(description = "Login : Verify Login popup with valid credentials", groups = { "sanity"}, dataProvider = "Credentials", dataProviderClass = DataProviders.class, priority = 2)
+	public void loginWithValidCredentials(String uname, String pswd) throws Throwable {
 		
 	    // Read credentials from config.properties
-	    String username = prop.getProperty("username");
-	    String password = prop.getProperty("password");
+	 //   String username = prop.getProperty("username");
+	 //   String password = prop.getProperty("password");
+		
 		
 
 	    // Perform login
-	    login.enterEmail(username);
-	    login.enterPassword(password);
+	    login.enterEmail(uname);
+	    login.enterPassword(pswd);
 	    login.clickSignIn();
 
 	    // Assertion: example check (update locator/page object as per your app)
@@ -71,7 +77,7 @@ public class Login extends BaseClass{
 
 	}
 	
-	@Test(description = "Verify Login popup with invalid credentials", groups = {"system"})
+	@Test(description = "Login : Verify Login popup with invalid credentials", groups = {"sanity"}, priority = 3)
 	public void loginWithInValidCredentials() throws Throwable {
 	    
 	    // Read invalid credentials from config.properties

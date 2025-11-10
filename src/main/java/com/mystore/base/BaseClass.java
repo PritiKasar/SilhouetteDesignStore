@@ -4,12 +4,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.apache.log4j.xml.DOMConfigurator;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.testng.annotations.AfterTest;
+import org.testng.annotations.BeforeSuite;
+import org.testng.annotations.BeforeTest;
+
 import com.mystore.actiondriver.Action;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -25,14 +29,17 @@ public class BaseClass {
 	//public static WebDriver driver;
 public static ThreadLocal<RemoteWebDriver> driver = new ThreadLocal<>();
 /** Provides thread-safe access to driver instance */
-
+@BeforeSuite
+public void beforeSuite() {
+	DOMConfigurator.configure("log4j.xml");
+}
 
 public static WebDriver getDriver() {
 	return driver.get();}
 /** Loads configuration from Config.properties */
-
+@BeforeTest
 /** Load config once before tests */
-public BaseClass() {
+public void loadConfig() {
     try {
         if (prop == null) {
             prop = new Properties();

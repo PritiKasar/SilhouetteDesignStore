@@ -7,8 +7,9 @@
         <methods>
           <include name="tearDown"/>
           <include name="setup"/>
+          <include name="verifyBrokenLinks"/>
           <include name="loadConfig"/>
-          <include name="testNavigationToHomeViaLogo"/>
+          <include name="beforeSuite"/>
         </methods>
       </class> <!-- com.mystore.testcases.IndexPageTest -->
     </classes>

@@ -7,6 +7,7 @@ import java.util.concurrent.TimeoutException;
 import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 import com.mystore.base.BaseClass;
 import com.mystore.page.HomePage;
@@ -14,6 +15,8 @@ import com.mystore.page.HomePage;
 /**
  * 
  */
+@Listeners(listeners.ExtentTestListener.class)
+
 public class SearchTest extends BaseClass{
 	HomePage homePage;
 	@BeforeMethod
@@ -28,7 +31,7 @@ public class SearchTest extends BaseClass{
     public void tearDownTest() {
         tearDown();  // closes browser after each test
     }
-    @Test(description = "Verify search with valid term and display first 5 product name", groups = { "system"})
+    @Test(description = "Verify search with valid term and display first 5 product name", groups = { "sanity"}, priority = 1)
     public void testValidSearchShowsResults() throws TimeoutException, InterruptedException {
 
         String searchTerm = "flower";
@@ -43,7 +46,7 @@ public class SearchTest extends BaseClass{
         Thread.sleep(3000);
     }
 
-    @Test(description = "Verify search with invalid term and display search result message", groups = {"system"})
+    @Test(description = "Verify search with invalid term and display search result message", groups = {"sanity"}, priority = 2)
     public void testInvalidSearchShowsNoResultsMessage() throws TimeoutException, InterruptedException {
     	 String invalidSearchTerm = "xyzabc123";
     	 homePage.searchTerm(invalidSearchTerm);
@@ -56,5 +59,8 @@ public class SearchTest extends BaseClass{
          System.out.println("ℹ️ Message: " + resultsPage.getNoResultsText());
          Thread.sleep(3000);
      }
-
+    @AfterMethod
+	public void tearDown() {
+		getDriver().quit();
+	}
 }

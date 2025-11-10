@@ -5,8 +5,11 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
+
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import org.openqa.selenium.NoSuchElementException;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
@@ -31,13 +34,25 @@ public class Action extends BaseClass {
 		js.executeScript("arguments[0].scrollIntoView();", ele);
 
 	}
+	 public static void click(WebDriver driver, WebElement element) {
+	        try {
+	            ((JavascriptExecutor) driver).executeScript(
+	                "arguments[0].scrollIntoView({behavior: 'auto', block: 'center', inline: 'center'});", element);
 
-	public static void click(WebDriver driver, WebElement ele) {
+	            Thread.sleep(300); // wait for scroll animation
 
-		Actions act = new Actions(driver);
-		act.moveToElement(ele).click().build().perform();
+	            // JS click (works even for offscreen elements)
+	            ((JavascriptExecutor) driver).executeScript("arguments[0].click();", element);
 
-	}
+	        } catch (Exception e) {
+	            System.out.println("❌ Unable to click element: " + e.getMessage());
+	        }
+	    }
+	 
+	 public static WebElement waitForElementVisible(WebDriver driver, By locator, int timeout) {
+		    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
+		    return wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+		}
 
 	public boolean findElement(WebDriver driver, WebElement ele) {
 		boolean flag = false;
@@ -57,7 +72,36 @@ public class Action extends BaseClass {
 		}
 		return flag;
 	}
-
+	public static boolean isDisplayed1(WebDriver driver, WebElement element) throws TimeoutException {
+        try {
+            WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(5));
+            wait.until(ExpectedConditions.visibilityOf(element));
+            return element.isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+    public static void waitForPageToLoad(WebDriver driver) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+        wait.until(webDriver -> ((JavascriptExecutor) webDriver)
+                .executeScript("return document.readyState").equals("complete"));
+    }
+	public static String getText(WebElement element) {
+        try {
+            return element.getText().trim();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+	   public static void scrollIntoView(WebDriver driver, WebElement element) {
+	        try {
+	            JavascriptExecutor js = (JavascriptExecutor) driver;
+	            js.executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", element);
+	            Thread.sleep(500); // optional small pause to ensure element is visible
+	        } catch (Exception e) {
+	            System.out.println("❌ Unable to scroll to element: " + e.getMessage());
+	        }
+	    }
 	public boolean isDisplayed(WebDriver driver, WebElement ele) {
 		boolean flag = false;
 		flag = findElement(driver, ele);
@@ -154,6 +198,7 @@ public class Action extends BaseClass {
 			}
 		}
 	}
+	
 
 	/**
 	 * select value from DropDown by using selectByIndex
@@ -167,7 +212,28 @@ public class Action extends BaseClass {
 	 *                    Listbox etc..)
 	 * 
 	 */
+	public static void sleep(long millis) {
+	    try {
+	        Thread.sleep(millis);
+	    } catch (InterruptedException e) {
+	        System.err.println("⚠ Sleep interrupted: " + e.getMessage());
+	    }
+	}
+	public static void waitUntilUrlIs(WebDriver driver, String expectedUrl, int timeoutSecs) {
+	    new WebDriverWait(driver, Duration.ofSeconds(timeoutSecs))
+	        .until(ExpectedConditions.urlToBe(expectedUrl));
+	}
 
+	
+	
+	public static void waitForElement(WebDriver driver, WebElement element, int timeout) {
+	    new WebDriverWait(driver, Duration.ofSeconds(timeout))
+	        .until(ExpectedConditions.visibilityOf(element));
+	}
+	public static void waitUntilUrlContains(WebDriver driver, String partialUrl, int timeoutSecs) {
+	    new WebDriverWait(driver, Duration.ofSeconds(timeoutSecs))
+	        .until(ExpectedConditions.urlContains(partialUrl));
+	}
 	public boolean selectByIndex(WebElement element, int index) {
 		boolean flag = false;
 		try {
@@ -419,6 +485,10 @@ public class Action extends BaseClass {
 			 */
 		}
 	}
+	
+	private WebDriverWait getWait() {
+    return new WebDriverWait(BaseClass.getDriver(), Duration.ofSeconds(10));
+}
 
 	public boolean draggable(WebDriver driver, WebElement source, int x, int y) {
 		boolean flag = false;
@@ -451,7 +521,14 @@ public class Action extends BaseClass {
 	    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeout));
 	    return wait.until(ExpectedConditions.elementToBeClickable(element));
 	}
-
+	public static void waitForClickable1(WebDriver driver, WebElement element, int timeoutSecs) {
+	    new WebDriverWait(driver, Duration.ofSeconds(timeoutSecs))
+	        .until(ExpectedConditions.elementToBeClickable(element));
+	}
+	public static void waitForLoadingMaskToDisappear(WebDriver driver, int timeoutInSeconds) {
+	    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeoutInSeconds));
+	    wait.until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("div.loading-mask")));
+	}
 	public boolean draganddrop(WebDriver driver, WebElement source, WebElement target) {
 		boolean flag = false;
 		try {
@@ -723,6 +800,7 @@ public class Action extends BaseClass {
 			System.out.println("Failed to set page load timeout. Error: " + e.getMessage());
 		}
 	}
+	
 
 	public String screenShot(WebDriver driver, String filename) {
 		String dateName = new SimpleDateFormat("yyyyMMddhhmmss").format(new Date());

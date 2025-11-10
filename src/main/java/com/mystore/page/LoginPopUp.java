@@ -60,7 +60,7 @@ public void clickSignIn() {
 
 public AccountCreationPopup createAnAccountpopup() {
 	Action.click(getDriver(), createAccountLink);
-	return new AccountCreationPopup(getDriver());
+	return new AccountCreationPopup();
 }
 public ForgotPasswordPopUp ForgotPasswordopup() {
 	Action.click(getDriver(), forgotPasswordLink);
