@@ -1,7 +1,6 @@
 package com.mystore.page;
 
 import java.time.Duration;
-import java.util.concurrent.Callable;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
@@ -12,26 +11,36 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-
 import com.mystore.base.BaseClass;
 
-public class AccountCreationPopup extends BaseClass implements Registration{
-	
-	@FindBy(name= "firstname")
-    private WebElement enterFirstName;
+/**
+ * AccountCreationPopup
+ * --------------------
+ * Handles registration popup actions with:
+ *  - Selenium 4.24+ compatible waits
+ *  - Clean input helpers
+ *  - Robust success/error message handling
+ *  - Full Java 21 compliance
+ */
+public class AccountCreationPopup extends BaseClass implements Registration {
+
+    // ===========================
+    // Locators
+    // ===========================
+    @FindBy(name = "firstname")
+    private WebElement firstNameField;
 
     @FindBy(name = "lastname")
-    private WebElement enterLastName;
+    private WebElement lastNameField;
 
     @FindBy(name = "email")
-    private WebElement enterEmail;
+    private WebElement emailField;
 
     @FindBy(name = "password")
-    private WebElement enterPassword;
-
+    private WebElement passwordField;
 
     @FindBy(id = "remember_meYtMT7AEXUn")
-    private WebElement rememberberME;
+    private WebElement rememberMeCheckbox;
 
     @FindBy(xpath = "//button[@title='Create an account']")
     private WebElement createAccountBtn;
@@ -39,69 +48,93 @@ public class AccountCreationPopup extends BaseClass implements Registration{
     @FindBy(xpath = "//div[@class='login-register-popup']//div[@class='response-msg']//div[@class='error']")
     private WebElement errorMessage;
 
-    private By successMessage = By.xpath("//div[@class='response-msg']/div[@class='success' and contains(text(), 'Registration successful')]");
-    private By requiredFieldError = By.cssSelector("div.mage-error");
+    private final By successMessage = By.xpath(
+            "//div[@class='response-msg']/div[@class='success' and contains(text(), 'Registration successful')]");
 
+    private final By requiredFieldError = By.cssSelector("div.mage-error");
+
+    // ===========================
+    // Constructor
+    // ===========================
     public AccountCreationPopup() {
         PageFactory.initElements(BaseClass.getDriver(), this);
     }
 
-    private WebDriverWait getWait() {
-        return new WebDriverWait(BaseClass.getDriver(), Duration.ofSeconds(10));
+    // ===========================
+    // Wait Helper (Selenium 4.24+)
+    // ===========================
+    private WebDriverWait waitFor(int seconds) {
+        WebDriverWait wait = new WebDriverWait(BaseClass.getDriver(), Duration.ofSeconds(seconds));
+        wait.pollingEvery(Duration.ofMillis(300));
+        return wait;
+    }
+
+    private WebDriverWait defaultWait() {
+        return waitFor(10);
     }
 
     private WebElement waitUntilVisible(WebElement element) {
-        return getWait().until(ExpectedConditions.visibilityOf(element));
+        return defaultWait().until(ExpectedConditions.visibilityOf(element));
+    }
+
+    // ===========================
+    // Field Input Handling
+    // ===========================
+    private void fillField(WebElement field, String value) {
+        WebElement visibleField = waitUntilVisible(field);
+        visibleField.clear();
+        visibleField.sendKeys(value);
     }
 
     @Override
-    public void enterFirstName(String Fname) {
-        WebElement field = waitUntilVisible(enterFirstName);
-        field.clear();
-        field.sendKeys(Fname);
+    public void enterFirstName(String value) {
+        fillField(firstNameField, value);
     }
 
     @Override
-    public void enterLastName(String Lname) {
-        WebElement field = waitUntilVisible(enterLastName);
-        field.clear();
-        field.sendKeys(Lname);
+    public void enterLastName(String value) {
+        fillField(lastNameField, value);
     }
 
     @Override
-    public void enterEmail(String email) {
-        WebElement field = waitUntilVisible(enterEmail);
-        field.clear();
-        field.sendKeys(email);
+    public void enterEmail(String value) {
+        fillField(emailField, value);
     }
 
     @Override
-    public void enterPassword(String password) {
-        WebElement field = waitUntilVisible(enterPassword);
-        field.clear();
-        field.sendKeys(password);
+    public void enterPassword(String value) {
+        fillField(passwordField, value);
     }
 
     @Override
     public void enterConfirmPassword(String confirmpassword) {
-        // Implement if needed
+        // No confirm password field in UI (as of now)
     }
 
+    // ===========================
+    // Actions
+    // ===========================
     @Override
     public void clickCreateAccount() {
         try {
-            getWait().until(ExpectedConditions.elementToBeClickable(createAccountBtn));
-            getWait().until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("div.loading-mask")));
+            defaultWait().until(ExpectedConditions.elementToBeClickable(createAccountBtn));
+            defaultWait().until(ExpectedConditions.invisibilityOfElementLocated(By.cssSelector("div.loading-mask")));
+
             try {
                 createAccountBtn.click();
             } catch (Exception e) {
-                ((JavascriptExecutor) BaseClass.getDriver()).executeScript("arguments[0].click();", createAccountBtn);
+                // fallback JavaScript click
+                ((JavascriptExecutor) BaseClass.getDriver())
+                        .executeScript("arguments[0].click();", createAccountBtn);
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to click Create Account button: " + e.getMessage());
+            throw new RuntimeException("❌ Failed to click Create Account: " + e.getMessage());
         }
     }
 
+    // ===========================
+    // Button Visibility
+    // ===========================
     @Override
     public WebElement getCreateAccountButton() {
         return createAccountBtn;
@@ -116,11 +149,15 @@ public class AccountCreationPopup extends BaseClass implements Registration{
         }
     }
 
+    // ===========================
+    // Success / Error Handling
+    // ===========================
     @Override
     public boolean isUserRegistered() {
         try {
-            WebElement msg = getWait().until(ExpectedConditions.visibilityOf(BaseClass.getDriver().findElement(successMessage)));
-            return msg.isDisplayed();
+            return defaultWait()
+                    .until(ExpectedConditions.visibilityOfElementLocated(successMessage))
+                    .isDisplayed();
         } catch (Exception e) {
             return false;
         }
@@ -130,7 +167,7 @@ public class AccountCreationPopup extends BaseClass implements Registration{
     public boolean isErrorDisplayed() {
         try {
             return errorMessage.isDisplayed();
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             return false;
         }
     }
@@ -139,7 +176,7 @@ public class AccountCreationPopup extends BaseClass implements Registration{
     public String getErrorMessageText() {
         try {
             return errorMessage.getText().trim();
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             return "";
         }
     }
@@ -147,9 +184,8 @@ public class AccountCreationPopup extends BaseClass implements Registration{
     @Override
     public boolean isSuccessMessageDisplayed() {
         try {
-            WebElement msg = getWait().until(ExpectedConditions.visibilityOf(BaseClass.getDriver().findElement(successMessage)));
-            return msg.isDisplayed();
-        } catch (NoSuchElementException e) {
+            return BaseClass.getDriver().findElement(successMessage).isDisplayed();
+        } catch (Exception e) {
             return false;
         }
     }
@@ -158,7 +194,7 @@ public class AccountCreationPopup extends BaseClass implements Registration{
     public String getSuccessMessageText() {
         try {
             return BaseClass.getDriver().findElement(successMessage).getText();
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             return "";
         }
     }
@@ -166,9 +202,10 @@ public class AccountCreationPopup extends BaseClass implements Registration{
     @Override
     public boolean isrequiredErrorDisplayed() {
         try {
-            WebElement errorMsg = getWait().until(ExpectedConditions.visibilityOf(BaseClass.getDriver().findElement(requiredFieldError)));
-            return errorMsg.isDisplayed();
-        } catch (NoSuchElementException e) {
+            return defaultWait()
+                    .until(ExpectedConditions.visibilityOfElementLocated(requiredFieldError))
+                    .isDisplayed();
+        } catch (Exception e) {
             return false;
         }
     }
@@ -177,47 +214,63 @@ public class AccountCreationPopup extends BaseClass implements Registration{
     public String getrequiredErrorMessageText() {
         try {
             return BaseClass.getDriver().findElement(requiredFieldError).getText();
-        } catch (NoSuchElementException e) {
+        } catch (Exception e) {
             return "";
         }
     }
 
+    // ===========================
+    // Trigger Validation
+    // ===========================
     @Override
     public void triggerFieldValidation() {
         JavascriptExecutor js = (JavascriptExecutor) BaseClass.getDriver();
-        try {
-            if (enterFirstName.isDisplayed()) js.executeScript("arguments[0].focus(); arguments[0].blur();", enterFirstName);
-            if (enterLastName.isDisplayed()) js.executeScript("arguments[0].focus(); arguments[0].blur();", enterLastName);
-            if (enterEmail.isDisplayed()) js.executeScript("arguments[0].focus(); arguments[0].blur();", enterEmail);
-            if (enterPassword.isDisplayed()) js.executeScript("arguments[0].focus(); arguments[0].blur();", enterPassword);
-        } catch (Exception e) {
-            System.out.println("⚠ Failed to trigger field validation: " + e.getMessage());
-        }
+
+        blur(js, firstNameField);
+        blur(js, lastNameField);
+        blur(js, emailField);
+        blur(js, passwordField);
     }
 
+    private void blur(JavascriptExecutor js, WebElement field) {
+        try {
+            if (field != null && field.isDisplayed()) {
+                js.executeScript("arguments[0].focus(); arguments[0].blur();", field);
+            }
+        } catch (Exception ignored) {}
+    }
+
+    // ===========================
+    // Error Wait
+    // ===========================
     @Override
     public boolean waitForErrorDisplayed(int timeoutSeconds) {
         try {
-            WebDriverWait wait = new WebDriverWait(BaseClass.getDriver(), Duration.ofSeconds(timeoutSeconds));
-            wait.until(ExpectedConditions.visibilityOf(errorMessage));
+            waitFor(timeoutSeconds).until(ExpectedConditions.visibilityOf(errorMessage));
             return true;
         } catch (Exception e) {
             return false;
         }
     }
 
+    // ===========================
+    // Element Getters
+    // ===========================
     @Override
     public WebElement getSuccessMessageElement() {
-        return getWait().until(ExpectedConditions.visibilityOf(BaseClass.getDriver().findElement(successMessage)));
+        return defaultWait()
+                .until(ExpectedConditions.visibilityOfElementLocated(successMessage));
     }
 
     @Override
     public WebElement getErrorElement() {
-        return getWait().until(ExpectedConditions.visibilityOf(errorMessage));
+        return defaultWait().until(ExpectedConditions.visibilityOf(errorMessage));
     }
 
     @Override
     public WebElement getRequiredErrorElement() {
-        return getWait().until(ExpectedConditions.visibilityOf(BaseClass.getDriver().findElement(requiredFieldError)));
+        return defaultWait()
+                .until(ExpectedConditions.visibilityOfElementLocated(requiredFieldError));
     }
 }
+

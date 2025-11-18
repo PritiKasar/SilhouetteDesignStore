@@ -12,68 +12,101 @@ import com.mystore.page.MyAccount;
 import com.mystore.utility.ExcelUtility;
 
 public class CheckoutPageTest extends BaseClass {
-    HomePage homepage;
-    LoginAble login;
-    MyAccount myAccount;
-    CheckoutFlowPage checkoutPage;
 
-    @Test(priority = 1, description = "Verify full checkout flow")
+    private HomePage homepage;
+    private LoginAble loginPopup;
+    private MyAccount myAccount;
+    private CheckoutFlowPage checkoutPage;
+
+    @Test(priority = 1, description = "Verify the complete checkout process from login to order placement.")
     public void verifyFullCheckoutFlow() throws Throwable {
-        // Step 1-4: Open App & Login
+
+        // -------------------------
+        // STEP 1: Launch Application
+        // -------------------------
         launchApp();
         homepage = new HomePage(getDriver());
-        login = homepage.clickAndCheckLogin();
-        Assert.assertNotNull(login, "Login popup not displayed");
+        
+        loginPopup = homepage.clickAndCheckLogin();
+        Assert.assertNotNull(loginPopup, "❌ Login popup did not appear.");
+        System.out.println("✅ Login popup displayed.");
 
-        login.enterEmail("priti.kasar+2@magnetoitsolutions.com");
-        login.enterPassword("Priti@123");
-        login.clickSignIn();
+        // -------------------------
+        // STEP 2: Login
+        // -------------------------
+        loginPopup.enterEmail("priti.kasar+2@magnetoitsolutions.com");
+        loginPopup.enterPassword("Priti@123");
+        loginPopup.clickSignIn();
 
         myAccount = new MyAccount(getDriver());
-        Assert.assertTrue(myAccount.isUserLoggedIn(), "❌ Login failed");
-        System.out.println("✅ Logged in successfully.");
+        Assert.assertTrue(myAccount.isUserLoggedIn(), "❌ Login failed.");
+        System.out.println("✅ Login successful.");
 
-        // Step 6-8: Clear Cart
+        // -------------------------
+        // STEP 3: Clear Cart
+        // -------------------------
         checkoutPage = new CheckoutFlowPage();
+
         checkoutPage.goToCartPage();
         checkoutPage.clearCart();
-        System.out.println("✅ Cart cleared.");
+        System.out.println("🧹 Cart cleared.");
 
-        // Step 9-11: Go to seller page & select random product
+        // -------------------------
+        // STEP 4: Go to Seller & Pick Random Product
+        // -------------------------
         checkoutPage.goToSellerProfilePage();
         checkoutPage.goToRandomProductFromSeller();
-        String expectedProductName = checkoutPage.getProductNameFromDetailsPage();
-        System.out.println("✅ Random Product: " + expectedProductName);
 
-        // Step 11-13: Add to cart & verify in cart
+        String expectedProductName = checkoutPage.getProductNameFromDetailsPage();
+        Assert.assertNotNull(expectedProductName, "❌ No product name retrieved.");
+        System.out.println("🛒 Selected Product: " + expectedProductName);
+
+        // -------------------------
+        // STEP 5: Add to Cart & Validate
+        // -------------------------
         checkoutPage.clickAddToCart();
         checkoutPage.goToCartPage();
-        String cartProductName = checkoutPage.getProductNameFromCart();
 
-        Assert.assertEquals(cartProductName, expectedProductName, "❌ Product name mismatch in cart");
-        System.out.println("✅ Product verified in cart.");
+        String actualCartProductName = checkoutPage.getProductNameFromCart();
+        Assert.assertEquals(actualCartProductName, expectedProductName, "❌ Product mismatch in cart.");
+        System.out.println("🛍️ Product correctly reflected in cart.");
 
-        // Step 16-17: Proceed to checkout and wait for payment URL
+        // -------------------------
+        // STEP 6: Proceed to Checkout
+        // -------------------------
         checkoutPage.clickProceedToCheckout();
-        System.out.println("✅ Navigated to payment step.");
+        System.out.println("➡️ Proceeded to checkout.");
 
-        // Step 18-20: Apply store credit
+        // -------------------------
+        // STEP 7: Apply Store Credit
+        // -------------------------
         checkoutPage.applyStoreCredit("10");
-        Assert.assertTrue(checkoutPage.isNoPaymentInfoDisplayed(), "❌ Store credit not applied properly.");
-        System.out.println("✅ Store credit applied.");
-        Action.sleep(40);
 
-        // Step 21: Place order
+        Assert.assertTrue(
+                checkoutPage.isNoPaymentInfoDisplayed(),
+                "❌ Store credit not applied or payment info still visible."
+        );
+        System.out.println("💳 Store credit applied successfully.");
+
+        Action.sleep(40);  // If this is waiting for balance update, replace later with a dynamic wait.
+
+        // -------------------------
+        // STEP 8: Place the Order
+        // -------------------------
         checkoutPage.placeOrder();
-        System.out.println("✅ Place order clicked.");
+        System.out.println("📝 Place Order clicked.");
 
-        // Step 22: Wait for success and get order number
+        // -------------------------
+        // STEP 9: Validate Order Success Page
+        // -------------------------
         String orderNumber = checkoutPage.waitForSuccessAndGetOrderNumber();
-        Assert.assertFalse(orderNumber.isEmpty(), "❌ Order number not retrieved");
-        System.out.println("✅ Order placed successfully. Order Number: " + orderNumber);
+        Assert.assertFalse(orderNumber.isEmpty(), "❌ Failed to retrieve order number.");
+        System.out.println("🎉 Order Placed Successfully! Order No: " + orderNumber);
 
-        // Step 23: Write order number + timestamp to Excel
+        // -------------------------
+        // STEP 10: Record in Excel
+        // -------------------------
         ExcelUtility.appendOrderRecord(orderNumber);
-        System.out.println("✅ Order recorded in Excel.");
+        System.out.println("📁 Order recorded in Excel.");
     }
 }

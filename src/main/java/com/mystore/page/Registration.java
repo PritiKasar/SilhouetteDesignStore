@@ -3,27 +3,49 @@ package com.mystore.page;
 import org.openqa.selenium.WebElement;
 
 public interface Registration {
-    void enterFirstName(String Fname);
-    void enterLastName(String Lname);
+
+    // ============================
+    // Input Methods
+    // ============================
+    void enterFirstName(String firstName);
+    void enterLastName(String lastName);
     void enterEmail(String email);
     void enterPassword(String password);
-    void enterConfirmPassword(String confirmpassword);
+    void enterConfirmPassword(String confirmPassword);
+
+    // ============================
+    // Actions
+    // ============================
     void clickCreateAccount();
 
+    // ============================
+    // Visibility Checks
+    // ============================
     boolean isCreateAccountButtonDisplayed();
     boolean isUserRegistered();
     boolean isErrorDisplayed();
-    String getErrorMessageText();
-    boolean waitForErrorDisplayed(int timeoutSeconds);
     boolean isSuccessMessageDisplayed();
-    String getSuccessMessageText();
     boolean isrequiredErrorDisplayed();
+
+    // ============================
+    // Get Text Methods
+    // ============================
+    String getErrorMessageText();
+    String getSuccessMessageText();
     String getrequiredErrorMessageText();
 
-    // For explicit waits
-    WebElement getCreateAccountButton();
+    // ============================
+    // Wait / Validation Helpers
+    // ============================
+    boolean waitForErrorDisplayed(int timeoutSeconds);
     void triggerFieldValidation();
+
+    // ============================
+    // Element Getters
+    // ============================
+    WebElement getCreateAccountButton();
     WebElement getSuccessMessageElement();
     WebElement getErrorElement();
     WebElement getRequiredErrorElement();
 }
+

@@ -1,10 +1,12 @@
 package com.mystore.page;
 
 /**
- * Common contract for both LoginPopUp and LoginPage.
+ * Contract for all login-capable UI components (popup or full page).
+ * Ensures consistent interactions across different login flows.
  */
 public interface LoginAble {
-	void enterEmail(String email);
+
+    void enterEmail(String email);
     void enterPassword(String password);
     void clickSignIn();
 

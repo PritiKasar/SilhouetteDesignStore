@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.mystore.page;
 
 import java.time.Duration;
@@ -16,96 +13,118 @@ import com.mystore.base.BaseClass;
 import com.mystore.actiondriver.Action;
 
 /**
- * 
+ * LoginPopUp:
+ * Handles login form displayed inside a popup modal.
+ * Implements LoginAble for unified login operations.
  */
-public  class LoginPopUp extends BaseClass implements LoginAble{
-@FindBy(id="username")  private WebElement Email;
+public class LoginPopUp extends BaseClass implements LoginAble {
 
-@FindBy(id="popup-password")  private WebElement Password;
- 
-@FindBy(xpath="//button[@title='Sign In']")  private WebElement SignInBtn;
+    @FindBy(id = "username")
+    private WebElement emailField;
 
-@FindBy(xpath = "//a[text()=' Create an account']")  private WebElement createAccountLink;
+    @FindBy(id = "popup-password")
+    private WebElement passwordField;
 
-@FindBy(xpath = "//a[text()='Forgot Password?']") private WebElement forgotPasswordLink;
+    @FindBy(xpath = "//button[@title='Sign In']")
+    private WebElement signInButton;
 
-@FindBy(id="remember_me") private WebElement rememberMeCheckbox;
+    @FindBy(xpath = "//a[text()=' Create an account']")
+    private WebElement createAccountLink;
 
-@FindBy(css = "div#user-logged-in a.user-link-dropdown.lm")
-private WebElement accountLink;
+    @FindBy(xpath = "//a[text()='Forgot Password?']")
+    private WebElement forgotPasswordLink;
 
-@FindBy(xpath = "//div[@class='login-register-popup']//div[@class='response-msg']//div[@class='error']")
-private WebElement loginErrorMessage;
+    @FindBy(id = "remember_me")
+    private WebElement rememberMeCheckbox;
 
-public LoginPopUp() {
-	PageFactory.initElements(getDriver(), this);
-}
-// Actions
+    @FindBy(css = "div#user-logged-in a.user-link-dropdown.lm")
+    private WebElement accountLink;
 
+    @FindBy(xpath = "//div[@class='login-register-popup']//div[@class='response-msg']//div[@class='error']")
+    private WebElement loginErrorMessage;
 
-@Override
-public void enterEmail(String email) {
-    Email.clear();
-    Email.sendKeys(email);
-}
-@Override
-public void enterPassword(String password) {
-    Password.clear();
-    Password.sendKeys(password);
-}
-@Override
-public void clickSignIn() {
-    SignInBtn.click();
-}
+    public LoginPopUp() {
+        PageFactory.initElements(getDriver(), this);
+    }
 
-public AccountCreationPopup createAnAccountpopup() {
-	Action.click(getDriver(), createAccountLink);
-	return new AccountCreationPopup();
-}
-public ForgotPasswordPopUp ForgotPasswordopup() {
-	Action.click(getDriver(), forgotPasswordLink);
-	return new ForgotPasswordPopUp();
-	}
-public void toggleRememberMe() {
-    rememberMeCheckbox.click();
-}
+    // -----------------------------------------------------------------------
+    // Actions
+    // -----------------------------------------------------------------------
 
-public boolean isSignInButtonDisplayed() {
-	try {
-        return SignInBtn.isDisplayed();
-    } catch (Exception e) {
-        return false;
-    }}
+    @Override
+    public void enterEmail(String email) {
+        emailField.clear();
+        emailField.sendKeys(email);
+    }
 
-public boolean isAccountLinkDisplayed() {
-    return accountLink.isDisplayed();
-}
-@Override
-public boolean isUserLoggedIn() {
-	// TODO Auto-generated method stub
-	return false;
-}
-public boolean isErrorDisplayed() {
-    try {
-        return loginErrorMessage.isDisplayed();
-    } catch (NoSuchElementException e) {
-        return false;
+    @Override
+    public void enterPassword(String password) {
+        passwordField.clear();
+        passwordField.sendKeys(password);
+    }
+
+    @Override
+    public void clickSignIn() {
+        signInButton.click();
+    }
+
+    public AccountCreationPopup openCreateAccountPopup() {
+        Action.click(getDriver(), createAccountLink);
+        return new AccountCreationPopup();
+    }
+
+    public ForgotPasswordPopUp openForgotPasswordPopup() {
+        Action.click(getDriver(), forgotPasswordLink);
+        return new ForgotPasswordPopUp();
+    }
+
+    public void toggleRememberMe() {
+        rememberMeCheckbox.click();
+    }
+
+    @Override
+    public boolean isSignInButtonDisplayed() {
+        try {
+            return signInButton.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isUserLoggedIn() {
+        try {
+            return accountLink.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public boolean isErrorDisplayed() {
+        try {
+            return loginErrorMessage != null && loginErrorMessage.isDisplayed();
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    @Override
+    public String getErrorMessageText() {
+        try {
+            return loginErrorMessage.getText().trim();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    @Override
+    public boolean waitForErrorDisplayed(int timeoutSeconds) {
+        try {
+            WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(timeoutSeconds));
+            return wait.until(ExpectedConditions.visibilityOf(loginErrorMessage)).isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
     }
 }
-
-public String getErrorMessageText() {
-    try {
-        return loginErrorMessage.getText().trim();
-    } catch (NoSuchElementException e) {
-        return "";
-    }
-}
-
-public boolean waitForErrorDisplayed(int timeoutSeconds) {
-    try {
-        WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(5));
-        return wait.until(ExpectedConditions.visibilityOf(loginErrorMessage)).isDisplayed();
-    } catch (Exception e) {
-        return false;
-    }
-}}

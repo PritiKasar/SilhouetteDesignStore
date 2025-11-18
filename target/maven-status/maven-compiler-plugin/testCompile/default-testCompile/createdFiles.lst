@@ -1,9 +1,0 @@
-com\mystore\testcases\Login.class
-com\mystore\testcases\RegistrationTest.class
-com\mystore\testcases\FetchProductLinksTest.class
-com\mystore\testcases\ProductPageTest.class
-com\mystore\testcases\AddNProductsToCartTest.class
-com\mystore\testcases\ShoppingCartTest.class
-com\mystore\testcases\SearchTest.class
-com\mystore\testcases\CheckoutPageTest.class
-com\mystore\testcases\IndexPageTest.class
