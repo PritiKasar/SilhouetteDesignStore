@@ -1,18 +1,21 @@
 /**
- * Excel Utility – unified helper for reading/writing Excel-based test data.
- * Supports:
- *   - Conditional row extraction
- *   - Random term fetching
- *   - DataProvider sheet loading
- *   - Appending order records
- *   - Writing product data
+ * 
+ */
+/**
+ * Excel Utility – unified helper for reading Excel-based test data.
+ * Supports both conditional row extraction and random term fetching.
  */
 package com.mystore.utility;
 
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class ExcelUtility {
@@ -32,20 +35,24 @@ public class ExcelUtility {
     }
 
     /**
-     * Fetches first row that matches a column/value condition.
-     * Returns: Entire matching row as String[]
+     * Returns all cell values from the first row that matches the given column/value condition.
+     * Example:
+     *   getRowDataByCondition("Users", "Username", "John")
+     *   → returns the entire row where Username = John
      */
     public String[] getRowDataByCondition(String sheetName, String columnName, String value) {
         XSSFSheet sheet = workbook.getSheet(sheetName);
-        if (sheet == null)
+        if (sheet == null) {
             throw new RuntimeException("❌ Sheet not found: " + sheetName);
+        }
 
-        XSSFRow headerRow = sheet.getRow(0);
-        if (headerRow == null)
-            throw new RuntimeException("❌ Header row not found in sheet: " + sheetName);
-
-        // Find column index
         int colIndex = -1;
+        XSSFRow headerRow = sheet.getRow(0);
+        if (headerRow == null) {
+            throw new RuntimeException("❌ Sheet '" + sheetName + "' has no header row!");
+        }
+
+        // Find the column index for the specified header name
         for (int i = 0; i < headerRow.getLastCellNum(); i++) {
             XSSFCell cell = headerRow.getCell(i);
             if (cell != null && cell.getStringCellValue().trim().equalsIgnoreCase(columnName)) {
@@ -53,163 +60,166 @@ public class ExcelUtility {
                 break;
             }
         }
-        if (colIndex == -1)
-            throw new RuntimeException("❌ Column not found: " + columnName);
 
-        // Find matching row
+        if (colIndex == -1) {
+            throw new RuntimeException("❌ Column not found: " + columnName);
+        }
+
+        // Find the row where the value matches
         for (int r = 1; r <= sheet.getLastRowNum(); r++) {
             XSSFRow row = sheet.getRow(r);
             if (row != null && row.getCell(colIndex) != null &&
-                    row.getCell(colIndex).getStringCellValue().trim().equalsIgnoreCase(value)) {
+                row.getCell(colIndex).getStringCellValue().trim().equalsIgnoreCase(value)) {
 
                 String[] rowData = new String[row.getLastCellNum()];
                 for (int c = 0; c < row.getLastCellNum(); c++) {
                     XSSFCell cell = row.getCell(c);
-                    rowData[c] = cell == null ? "" : getCellValueAsString(cell);
+                    rowData[c] = (cell == null) ? "" : getCellValueAsString(cell);
                 }
                 return rowData;
             }
         }
+
         return null;
     }
 
     /**
-     * Returns random non-empty value from sheet’s first column.
+     * Returns a random non-empty value from a given sheet’s first column.
+     * Used for tests like SearchTest to pick random data each run.
      */
     public String getRandomValueFromColumn(String sheetName) {
         XSSFSheet sheet = workbook.getSheet(sheetName);
-        if (sheet == null)
+        if (sheet == null) {
             throw new RuntimeException("❌ Sheet not found: " + sheetName);
+        }
 
         List<String> values = new ArrayList<>();
 
         for (int r = 0; r <= sheet.getLastRowNum(); r++) {
             XSSFRow row = sheet.getRow(r);
             if (row != null && row.getCell(0) != null) {
-                String val = row.getCell(0).toString().trim();
-                if (!val.isEmpty())
-                    values.add(val);
+                String value = row.getCell(0).toString().trim();
+                if (!value.isEmpty()) {
+                    values.add(value);
+                }
             }
         }
 
-        if (values.isEmpty())
+        if (values.isEmpty()) {
             throw new RuntimeException("⚠ No non-empty values found in sheet: " + sheetName);
+        }
 
         return values.get(new Random().nextInt(values.size()));
     }
 
     /**
-     * Converts cell value to readable String safely.
+     * Converts different Excel cell types into String safely.
      */
     private String getCellValueAsString(XSSFCell cell) {
-        return new DataFormatter().formatCellValue(cell);
+        DataFormatter formatter = new DataFormatter();
+        return formatter.formatCellValue(cell);
     }
 
     /**
-     * Returns sheet data as 2D array (useful for TestNG @DataProvider)
+     * Returns all data in a given sheet as a 2D String array
+     * (useful for @DataProvider setups).
      */
     public String[][] getSheetData(String sheetName) {
         XSSFSheet sheet = workbook.getSheet(sheetName);
-        if (sheet == null)
+        if (sheet == null) {
             throw new RuntimeException("❌ Sheet not found: " + sheetName);
+        }
 
         int rowCount = sheet.getPhysicalNumberOfRows();
         int colCount = sheet.getRow(0).getLastCellNum();
-
         String[][] data = new String[rowCount - 1][colCount];
 
         for (int i = 1; i < rowCount; i++) {
             XSSFRow row = sheet.getRow(i);
             for (int j = 0; j < colCount; j++) {
                 XSSFCell cell = row.getCell(j);
-                data[i - 1][j] = cell == null ? "" : getCellValueAsString(cell);
+                data[i - 1][j] = (cell == null) ? "" : getCellValueAsString(cell);
             }
         }
         return data;
     }
+/**
+    * Writes a list of row data to the specified sheet in an Excel file.
+    *
+    * @param excelPath Path to Excel file
+    * @param sheetName Sheet name to write to
+    * @param dataToWrite List of rows, each row is a String array
+    */
+   public static void writeProductData(String excelPath, String sheetName, List<String[]> dataToWrite) {
+       try {
+           File file = new File(excelPath);
+           XSSFWorkbook workbook;
+           Sheet sheet;
 
-    /**
-     * Writes product data list to an Excel sheet.
-     */
-    public static void writeProductData(String excelPath, String sheetName, List<String[]> dataToWrite) {
-        try {
-            File file = new File(excelPath);
-            XSSFWorkbook workbook;
-            Sheet sheet;
+           if (file.exists()) {
+               FileInputStream fis = new FileInputStream(file);
+               workbook = new XSSFWorkbook(fis);
+               sheet = workbook.getSheet(sheetName);
+               if (sheet == null) sheet = workbook.createSheet(sheetName);
+               fis.close();
+           } else {
+               workbook = new XSSFWorkbook();
+               sheet = workbook.createSheet(sheetName);
+           }
 
-            if (file.exists()) {
-                FileInputStream fis = new FileInputStream(file);
-                workbook = new XSSFWorkbook(fis);
-                sheet = workbook.getSheet(sheetName);
+           int lastRow = sheet.getLastRowNum() + 1;
+           for (String[] rowData : dataToWrite) {
+               Row row = sheet.createRow(lastRow++);
+               for (int i = 0; i < rowData.length; i++) {
+                   Cell cell = row.createCell(i);
+                   cell.setCellValue(rowData[i]);
+               }
+           }
 
-                if (sheet == null)
-                    sheet = workbook.createSheet(sheetName);
+           FileOutputStream fos = new FileOutputStream(file);
+           workbook.write(fos);
+           fos.close();
+           workbook.close();
 
-                fis.close();
-            } else {
-                workbook = new XSSFWorkbook();
-                sheet = workbook.createSheet(sheetName);
-            }
+           System.out.println("✅ Product data written to Excel successfully!");
+       } catch (Exception e) {
+           throw new RuntimeException("❌ Failed to write Excel file: " + e.getMessage(), e);
+       }
+   }
+   public static void appendOrderRecord(String orderId) {
+       FileInputStream fis = null;
+       Workbook workbook = null;
+       FileOutputStream fos = null;
 
-            int lastRow = sheet.getLastRowNum() + 1;
+       try {
+           fis = new FileInputStream(FILE_PATH);
+           workbook = new XSSFWorkbook(fis);
+           Sheet sheet = workbook.getSheetAt(0);
 
-            for (String[] rowData : dataToWrite) {
-                Row row = sheet.createRow(lastRow++);
-                for (int i = 0; i < rowData.length; i++) {
-                    Cell cell = row.createCell(i);
-                    cell.setCellValue(rowData[i]);
-                }
-            }
+           int lastRowNum = sheet.getLastRowNum();
+           Row row = sheet.createRow(lastRowNum + 1);
 
-            FileOutputStream fos = new FileOutputStream(file);
-            workbook.write(fos);
+           Cell orderCell = row.createCell(0);
+           orderCell.setCellValue(orderId);
 
-            fos.close();
-            workbook.close();
+           Cell timeCell = row.createCell(1);
+           timeCell.setCellValue(new Date().toString());
 
-            System.out.println("✅ Product data written successfully!");
+           fis.close(); // Close input before writing
 
-        } catch (Exception e) {
-            throw new RuntimeException("❌ Failed to write Excel file: " + e.getMessage(), e);
-        }
-    }
+           fos = new FileOutputStream(FILE_PATH);
+           workbook.write(fos);
+           System.out.println("✅ Order ID appended to Excel: " + orderId);
 
-    /**
-     * Appends an order ID + timestamp to Orders.xlsx
-     */
-    public static void appendOrderRecord(String orderId) {
-        FileInputStream fis = null;
-        Workbook workbook = null;
-        FileOutputStream fos = null;
-
-        try {
-            fis = new FileInputStream(FILE_PATH);
-            workbook = new XSSFWorkbook(fis);
-            Sheet sheet = workbook.getSheetAt(0);
-
-            Row row = sheet.createRow(sheet.getLastRowNum() + 1);
-
-            row.createCell(0).setCellValue(orderId);
-            row.createCell(1).setCellValue(new Date().toString());
-
-            fis.close(); // MUST CLOSE before writing
-
-            fos = new FileOutputStream(FILE_PATH);
-            workbook.write(fos);
-
-            System.out.println("✅ Order ID appended: " + orderId);
-
-        } catch (IOException e) {
-            System.out.println("❌ Failed to write Orders.xlsx: " + e.getMessage());
-
-        } finally {
-            try {
-                if (workbook != null) workbook.close();
-                if (fos != null) fos.close();
-            } catch (IOException e) {
-                System.out.println("⚠ Failed to close stream: " + e.getMessage());
-            }
-        }
-    }
-}
-
+       } catch (IOException e) {
+           System.out.println("❌ Failed to write to Excel: " + e.getMessage());
+       } finally {
+           try {
+               if (workbook != null) workbook.close();
+               if (fos != null) fos.close();
+           } catch (IOException e) {
+               System.out.println("⚠ Failed to close streams: " + e.getMessage());
+           }
+       }
+   }
+	}

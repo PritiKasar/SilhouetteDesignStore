@@ -1,3 +1,6 @@
+/**
+ * 
+ */
 package com.mystore.page;
 
 import java.time.Duration;
@@ -12,59 +15,53 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.mystore.base.BaseClass;
 
-/**
- * LoginPage:
- * Handles full-page login form (standard login view).
- * Implements LoginAble to maintain consistency with popup login.
- */
-public class LoginPage extends BaseClass implements LoginAble {
+public class LoginPage extends BaseClass implements LoginAble{
 
     public LoginPage() {
         PageFactory.initElements(getDriver(), this);
     }
 
-    // -----------------------------------------------------------------------
-    // Web Elements
-    // -----------------------------------------------------------------------
-
-    @FindBy(id = "email")
+    @FindBy(id = "email")  // or whatever the `Email` field’s locator is on login page
     private WebElement emailField;
 
-    @FindBy(id = "pass")
+    @FindBy(id = "pass") // adjust locator
     private WebElement passwordField;
 
-    @FindBy(id = "send2")
+    @FindBy(id= "send2")  // or matching page version
     private WebElement signInButton;
 
     @FindBy(xpath = "//strong[@id='block-customer-login-heading']")
-    private WebElement accountHeading;
+    private WebElement accountLink;
+    
+    private By loginErrorMessageBy = By.xpath("//div[@data-ui-id='message-error']");
 
+   
     @FindBy(xpath = "//div[@data-ui-id='message-error']")
     private WebElement loginErrorMessage;
-
-    private final By loginErrorMessageBy = By.xpath("//div[@data-ui-id='message-error']");
-
-    // -----------------------------------------------------------------------
-    // Implemented Methods
-    // -----------------------------------------------------------------------
-
+    
+    
     @Override
     public void enterEmail(String email) {
         emailField.clear();
         emailField.sendKeys(email);
     }
-
     @Override
     public void enterPassword(String pwd) {
         passwordField.clear();
         passwordField.sendKeys(pwd);
     }
-
     @Override
     public void clickSignIn() {
         signInButton.click();
     }
-
+    @Override
+    public boolean isUserLoggedIn() {
+        try {
+            return accountLink.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
     @Override
     public boolean isSignInButtonDisplayed() {
         try {
@@ -73,21 +70,11 @@ public class LoginPage extends BaseClass implements LoginAble {
             return false;
         }
     }
-
-    @Override
-    public boolean isUserLoggedIn() {
-        try {
-            return accountHeading.isDisplayed();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     @Override
     public boolean isErrorDisplayed() {
         try {
-            return getDriver().findElements(loginErrorMessageBy).size() > 0 &&
-                   getDriver().findElement(loginErrorMessageBy).isDisplayed();
+            return getDriver().findElements(loginErrorMessageBy).size() > 0
+                    && getDriver().findElement(loginErrorMessageBy).isDisplayed();
         } catch (Exception e) {
             return false;
         }
@@ -96,7 +83,7 @@ public class LoginPage extends BaseClass implements LoginAble {
     @Override
     public String getErrorMessageText() {
         try {
-            return loginErrorMessage.getText().trim();
+            return getDriver().findElement(loginErrorMessageBy).getText().trim();
         } catch (NoSuchElementException e) {
             return "";
         }
@@ -105,7 +92,7 @@ public class LoginPage extends BaseClass implements LoginAble {
     @Override
     public boolean waitForErrorDisplayed(int timeoutSeconds) {
         try {
-            WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(timeoutSeconds));
+        	WebDriverWait wait = new WebDriverWait(getDriver(), Duration.ofSeconds(timeoutSeconds));
             wait.until(ExpectedConditions.visibilityOfElementLocated(loginErrorMessageBy));
             return true;
         } catch (Exception e) {
@@ -113,4 +100,3 @@ public class LoginPage extends BaseClass implements LoginAble {
         }
     }
 }
-

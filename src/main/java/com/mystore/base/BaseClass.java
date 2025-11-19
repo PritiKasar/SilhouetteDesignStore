@@ -4,46 +4,43 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import org.apache.log4j.xml.DOMConfigurator;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-
+import org.openqa.selenium.ie.InternetExplorerDriver;
 import org.openqa.selenium.remote.RemoteWebDriver;
-
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.BeforeTest;
 
 import com.mystore.actiondriver.Action;
-
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 /**
- * BaseClass - Chrome only (Windows + Linux support)
+ * BaseClass
+ * ----------
+ * Handles:
+ *  - WebDriver initialization
+ *  - Config loading
+ *  - Thread-safe driver (ThreadLocal)
  */
 public class BaseClass {
 
     public static Properties prop;
-    private static final Logger log = LogManager.getLogger(BaseClass.class);
+    public static ThreadLocal<RemoteWebDriver> driver = new ThreadLocal<>();
 
-    // Thread-safe WebDriver
-    private static ThreadLocal<RemoteWebDriver> driver = new ThreadLocal<>();
-
-
+    /** Thread-safe WebDriver getter */
     public static WebDriver getDriver() {
         return driver.get();
     }
 
-
+    /** Configure Log4j before entire suite */
     @BeforeSuite
-    public void initSuite() {
-        log.info("===== Test Suite Execution Started =====");
+    public void beforeSuite() {
+        DOMConfigurator.configure("log4j.xml");
     }
 
-
+    /** Load Config properties only once */
     @BeforeTest
     public void loadConfig() {
         try {
@@ -52,61 +49,45 @@ public class BaseClass {
                 FileInputStream ip = new FileInputStream(
                         System.getProperty("user.dir") + "/Configuration/Config.properties");
                 prop.load(ip);
-                log.info("Configuration loaded successfully");
             }
         } catch (IOException e) {
-            log.error("Failed to load configuration file", e);
+            e.printStackTrace();
         }
     }
 
-
-    /** Launch Chrome on Windows or Linux */
+    /** Launch Browser + Open Application URL */
     public static void launchApp() {
 
-        log.info("Starting Chrome browser...");
+        String browserName = prop.getProperty("browser").trim().toLowerCase();
 
-        // WebDriverManager auto-detects OS (Windows / Linux)
-        WebDriverManager.chromedriver().setup();
+        switch (browserName) {
 
-        ChromeOptions options = new ChromeOptions();
+            case "chrome":
+                WebDriverManager.chromedriver().setup();
+                driver.set(new ChromeDriver());
+                break;
 
-        // Important – avoid automation errors on servers
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--remote-allow-origins=*");
+            case "ie":
+                WebDriverManager.iedriver().setup();
+                driver.set(new InternetExplorerDriver());
+                break;
 
-        // If running on server without GUI → headless mode
-        if (isLinuxServer()) {
-            log.info("Linux server detected → Running Chrome in headless mode");
-            options.addArguments("--headless=new");
-            options.addArguments("--disable-gpu");
-            options.addArguments("--window-size=1920,1080");
+            default:
+                throw new RuntimeException("❌ Unsupported Browser in Config: " + browserName);
         }
-
-        driver.set(new ChromeDriver(options));
 
         getDriver().manage().window().maximize();
         Action.implicitWait(getDriver(), 5);
         Action.pageLoadTimeOut(getDriver(), 30);
-
-        String url = prop.getProperty("url");
-        log.info("Navigating to: " + url);
-        getDriver().get(url);
+        getDriver().get(prop.getProperty("url"));
     }
 
-
-    // Detect Linux server environment
-    private static boolean isLinuxServer() {
-        String osName = System.getProperty("os.name").toLowerCase();
-        return osName.contains("linux");
-    }
-
-
+    /** Close browser after all tests */
     @AfterTest
     public void tearDown() {
         if (getDriver() != null) {
             getDriver().quit();
-            log.info("Browser closed successfully.");
+            System.out.println("✅ Browser closed after all tests");
         }
     }
 }
