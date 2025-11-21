@@ -7,7 +7,6 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.mystore.actiondriver.Action;
 import com.mystore.base.BaseClass;
 import com.mystore.page.NewDesignsPage;
 import com.mystore.page.ProductPage;
@@ -39,8 +38,6 @@ public class ShoppingCartTest extends BaseClass {
         // 4️⃣ Pick a random product
         randomProductURL = allLinks.get(new Random().nextInt(allLinks.size()));
         System.out.println("🎯 Random Product Selected: " + randomProductURL);
-        Action.sleep(50);
-
 
         // 5️⃣ Open the random product
         getDriver().get(randomProductURL);
@@ -55,8 +52,6 @@ public class ShoppingCartTest extends BaseClass {
 
         // 7️⃣ Add product to cart
         productPage.clickAddToCart();
-        Action.sleep(50);
-
 
         // 8️⃣ Redirect to Shopping Cart
         getDriver().get("https://www.silhouettedesignstore.com/checkout/cart/");

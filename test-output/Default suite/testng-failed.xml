@@ -3,15 +3,14 @@
 <suite name="Failed suite [Default suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" name="Default test(failed)">
     <classes>
-      <class name="com.mystore.testcases.IndexPageTest">
+      <class name="com.mystore.testcases.CheckoutPageTest">
         <methods>
           <include name="tearDown"/>
-          <include name="setup"/>
-          <include name="verifyBrokenLinks"/>
           <include name="loadConfig"/>
           <include name="beforeSuite"/>
+          <include name="verifyFullCheckoutFlow"/>
         </methods>
-      </class> <!-- com.mystore.testcases.IndexPageTest -->
+      </class> <!-- com.mystore.testcases.CheckoutPageTest -->
     </classes>
   </test> <!-- Default test(failed) -->
 </suite> <!-- Failed suite [Default suite] -->

@@ -1,5 +1,6 @@
 package com.mystore.testcases;
 
+
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
@@ -25,7 +26,7 @@ public class CheckoutPageTest extends BaseClass {
         login = homepage.clickAndCheckLogin();
         Assert.assertNotNull(login, "Login popup not displayed");
 
-        login.enterEmail("priti.kasar+2@magnetoitsolutions.com");
+        login.enterEmail("priti.kasar+3@magnetoitsolutions.com");
         login.enterPassword("Priti@123");
         login.clickSignIn();
 
@@ -56,13 +57,12 @@ public class CheckoutPageTest extends BaseClass {
         // Step 16-17: Proceed to checkout and wait for payment URL
         checkoutPage.clickProceedToCheckout();
         System.out.println("✅ Navigated to payment step.");
-        Action.sleep(50);
 
         // Step 18-20: Apply store credit
         checkoutPage.applyStoreCredit("10");
         Assert.assertTrue(checkoutPage.isNoPaymentInfoDisplayed(), "❌ Store credit not applied properly.");
         System.out.println("✅ Store credit applied.");
-        Action.sleep(50);
+        Action.sleep(40);
 
         // Step 21: Place order
         checkoutPage.placeOrder();

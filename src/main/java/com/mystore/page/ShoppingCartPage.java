@@ -12,7 +12,7 @@ public class ShoppingCartPage extends BaseClass {
     // Locators
   private By cartPageTitle = By.cssSelector("h1.page-title span.base[data-ui-id='page-title-wrapper']");
 
-    private By productTitleInCart = By.cssSelector("h1.page-title span.base[data-ui-id='page-title-wrapper']");
+    private By productTitleInCart = By.cssSelector("td[class='col item'] div[class='product-item-details'] a");
     private By subtotalPrice = By.cssSelector("tr[class='totals sub'] span[class='price']");
     private By orderTotalPrice = By.cssSelector("strong span[class='price']");
 

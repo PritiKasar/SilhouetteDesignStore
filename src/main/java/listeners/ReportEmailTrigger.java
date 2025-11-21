@@ -24,7 +24,7 @@ public class ReportEmailTrigger implements ISuiteListener {
     private static final String SMTP_PASS = "vmtlarolrpizbmwg"; // Gmail app password (not personal password)
 
     // =================== 📤 RECIPIENTS ===================
- private static final String TO_EMAILS = "kaspritiautomation@gmail.com, jaimin.b@magnetoitsolutions.com, gajanan@magnetoitsolutions.com, bhargav@magnetoitsolutions.com, kanisha.shah@magnetoitsolutions.com";
+ private static final String TO_EMAILS = "kaspritiautomation@gmail.com, jaimin.b@magnetoitsolutions.com, gajanan@magnetoitsolutions.com, bhargav@magnetoitsolutions.com, kanisha.shah@magnetoitsolutions.com,ravi.patel@bytestechnolab.com";
  //   private static final String TO_EMAILS = "kaspritiautomation@gmail.com";
     private static final String CC_EMAILS = "priti.kasar+1@magnetoitsolutions.com";
     private static final String BCC_EMAILS = "pritik.magneto@gmail.com";
